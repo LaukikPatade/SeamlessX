@@ -1,0 +1,45 @@
+service: mongoaws
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  memorySize: 128
+  region: ap-southeast-2
+  stage: ${opt:stage,'dev'}
+
+functions:
+  populate:
+    handler: src/handlers/populate.handler
+    events:
+      - schedule: rate(1 minute)
+          
+  createUser:
+    handler: src/handlers/createUser.handler
+    events:
+      - httpApi:
+          path: /register
+          method: post
+  loginUser:
+    handler: src/handlers/loginUser.handler
+    events:
+      - httpApi:
+          path: /login
+          method: post
+  getOffers:
+    handler: src/handlers/getOffers.handler
+    events:
+      - httpApi:
+          path: /offers
+          method: get
+  getOffer:
+    handler: src/handlers/getOffer.handler
+    events:
+      - httpApi:
+          path: /offer/{id}
+          method: get
+
+          
+
+plugins:
+  - serverless-offline
